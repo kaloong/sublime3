@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Get and Install Sublime3 oldschool style
+      block:
+        - name: Get sublime3
+          get_url:
+            url: https://download.sublimetext.com/sublime_text_3_build_3211_x64.tar.bz2 
+            dest: "{{ ansible_user_dir}}"
+            force: yes
+            #force don't change it or the logic will break when downloaded.changed.
+          register: downloaded
+            
+        - debug:
+            msg: "->>> {{ downloaded }} <<<-" 
+    
+        - name: Check if this should continue
+          meta: end_play
+          when: 
+            - downloaded.changed == False
+    
+        - name: Check Download status
+          debug:
+            msg: "Downloaded? {{ downloaded }}"        
+          when: |
+            ( downloaded.status_code == 200 )
+    
+    #    - name:
+    #      shell: wall 'beep'
+    #      changed_when: False
+    
+        - name: Unzip Sublime3
+          unarchive:
+            src: "{{ downloaded.dest }}"
+            dest: "{{ ansible_user_dir }}"
+      when: |
+        ( ansible_distribution != "Ubuntu" ) and
+        ( ansible_distribution != "Redhat" ) and
+        ( ansible_distribution != "CentOS" ) 
+
+    - name: Get and Install Sublime3 via apt
+      block:
+        - name: Install apt transport for https
+          apt:
+            name: apt-transport-https
+            state: present
+
+        - name: Download and install GPG key for the repo
+          apt_key:
+            url: https://download.sublimetext.com/sublimehq-pub.gpg
+            state: present
+
+        - name:
+          apt_repository:
+            repo: deb https://download.sublimetext.com/ apt/stable/
+            state: present
+        - name:
+          apt:
+            name: sublime-text
+            update_cache: yes
+            state: present
+      when: |
+        ( ansible_distribution == "Ubuntu" ) or 
+        ( ansible_distribution == "Debian" )
+      become: true
