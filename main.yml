@@ -34,9 +34,11 @@
             src: "{{ downloaded.dest }}"
             dest: "{{ ansible_user_dir }}"
       when: |
-        ( ansible_distribution != "Ubuntu" ) and
-        ( ansible_distribution != "Redhat" ) and
-        ( ansible_distribution != "CentOS" ) 
+        ( source is defined )
+#      when: |
+#        ( ansible_distribution != "Ubuntu" ) and
+#        ( ansible_distribution != "Redhat" ) and
+#        ( ansible_distribution != "CentOS" ) 
 
     - name: Get and Install Sublime3 via apt
       block:
@@ -60,6 +62,7 @@
             update_cache: yes
             state: present
       when: |
-        ( ansible_distribution == "Ubuntu" ) or 
-        ( ansible_distribution == "Debian" )
+        ( ( ansible_distribution == "Ubuntu" ) or 
+        ( ansible_distribution == "Debian" ) )and 
+        ( source is not defined )
       become: true
