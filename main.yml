@@ -78,6 +78,7 @@
 
         - name: Add Sublime yum repository
           yum_repository:
+            name: sublime-text
             baseurl: https://download.sublimetext.com/rpm/stable/x86_64
             state: present
         
