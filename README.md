@@ -15,4 +15,7 @@ ansible-playbook main.yml -e "source=true"
 or
 ansible-playbook main.yml -e "source="
 
+If running on CentOS system, do add -K for sudo password.
+ansible-playbook main.yml -e "source=" -K
+
 It doesn't matter what source is as long as it is defined it will trigger the Download unzip block.
