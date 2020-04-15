@@ -72,8 +72,9 @@
       become: true
       block:
         - name: Add Yum key
-          key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
-          state: present
+          rpm_key:
+            key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+            state: present
 
         - name: Add Sublime yum repository
           yum_repository:
