@@ -68,6 +68,31 @@
         ( ansible_distribution == "Debian" ) )and 
         ( source is not defined )
 
+    - name: Get and Install Sublime3 via dnf for Centos7
+      become: true
+      block:
+        - name: Add Yum key
+          rpm_key:
+            key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+            state: present
+
+        - name: Add Sublime yum repository
+          yum_repository:
+            name: sublime-text
+            description: Sublime-text yum repo
+            baseurl: https://download.sublimetext.com/rpm/stable/x86_64
+            state: present
+        
+        - name: Install Sublime3
+          dnf:
+            name: sublime-text
+            state: present
+      when: |
+        ( ( ansible_distribution == "CentOS" ) or
+        ( ansible_distribution == "RedHat" ) ) and
+        ( ansible_distribution_version >= 7.6 ) and
+        ( source is not defined )
+
     - name: Get and Install Sublime3 via yum
       become: true
       block:
@@ -90,4 +115,5 @@
       when: |
         ( ( ansible_distribution == "CentOS" ) or
         ( ansible_distribution == "RedHat" ) ) and
+        ( ansible_distribution_version < 7 ) and
         ( source is not defined )
